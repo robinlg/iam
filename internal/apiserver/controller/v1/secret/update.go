@@ -1,0 +1,53 @@
+package secret
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/robinlg/iam/internal/pkg/code"
+	"github.com/robinlg/iam/internal/pkg/middleware"
+	"github.com/robinlg/iam/pkg/log"
+	v1 "github.com/robinlg/iamapi/apiserver/v1"
+	errors "github.com/robinlg/iamerrors"
+	"github.com/robinlg/iamlib/pkg/core"
+	metav1 "github.com/robinlg/iamlib/pkg/meta/v1"
+)
+
+// Update update a key by the secret key identifier.
+func (s *SecretController) Update(c *gin.Context) {
+	log.L(c).Info("update secret function called.")
+
+	var r v1.Secret
+	if err := c.ShouldBindJSON(&r); err != nil {
+		core.WriteResponse(c, errors.WithCode(code.ErrBind, "%s", err.Error()), nil)
+
+		return
+	}
+
+	username := c.GetString(middleware.UsernameKey)
+	name := c.Param("name")
+
+	secret, err := s.srv.Secrets().Get(c, username, name, metav1.GetOptions{})
+	if err != nil {
+		core.WriteResponse(c, errors.WithCode(code.ErrDatabase, "%s", err.Error()), nil)
+
+		return
+	}
+
+	// only update expires and description
+	secret.Expires = r.Expires
+	secret.Description = r.Description
+	secret.Extend = r.Extend
+
+	if errs := secret.Validate(); len(errs) != 0 {
+		core.WriteResponse(c, errors.WithCode(code.ErrValidation, "%s", errs.ToAggregate().Error()), nil)
+
+		return
+	}
+
+	if err := s.srv.Secrets().Update(c, secret, metav1.UpdateOptions{}); err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, secret)
+}

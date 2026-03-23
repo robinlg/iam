@@ -2,18 +2,21 @@
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: add-copyright
+all: gen add-copyright
 
 # ==============================================================================
 # Build options
 
 ROOT_PACKAGE=github.com/robinlg/iam
+VERSION_PACKAGE=github.com/robinlg/iamlib/pkg/version
 
 # ==============================================================================
 # Includes
 
 include scripts/make-rules/common.mk # make sure include common.mk at the first include line
+include scripts/make-rules/golang.mk
 include scripts/make-rules/copyright.mk
+include scripts/make-rules/gen.mk
 include scripts/make-rules/tools.mk
 
 # ==============================================================================
@@ -38,6 +41,11 @@ verify-copyright:
 .PHONY: add-copyright
 add-copyright:
 	@$(MAKE) copyright.add
+
+## gen: Generate all necessary files, such as error code files.
+.PHONY: gen
+gen:
+	@$(MAKE) gen.run
 
 ## help: Show this help info.
 .PHONY: help

@@ -11,6 +11,6 @@ endif
 # Missing BLOCKER_TOOLS can cause the CI flow execution failed, i.e. `make all` failed.
 # Missing CRITICAL_TOOLS can lead to some necessary operations failed. i.e. `make release` failed.
 # TRIVIAL_TOOLS are Optional tools, missing these tool have no affect.
-BLOCKER_TOOLS ?= addlicense
+BLOCKER_TOOLS ?= addlicense golines golangci-lint codegen
 CRITICAL_TOOLS ?= go-gitlint
 TRIVIAL_TOOLS ?= kube-score

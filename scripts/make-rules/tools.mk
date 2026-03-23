@@ -21,3 +21,10 @@ tools.verify.%:
 install.addlicense:
 	@$(GO) install github.com/marmotedu/addlicense@latest
 
+.PHONY: install.golines
+install.golines:
+	@$(GO) install github.com/segmentio/golines@latest
+
+.PHONY: install.codegen
+install.codegen:
+	@$(GO) install ${ROOT_DIR}/tools/codegen/codegen.go
