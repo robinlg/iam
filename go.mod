@@ -6,6 +6,9 @@ require (
 	github.com/AlekSi/pointer v1.1.0
 	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+	github.com/avast/retry-go v3.0.0+incompatible
+	github.com/buger/jsonparser v1.1.1
+	github.com/dgraph-io/ristretto v0.1.0
 	github.com/fatih/color v1.18.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/pprof v1.3.0
@@ -13,7 +16,7 @@ require (
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/mattn/go-isatty v0.0.20
 	github.com/ory/ladon v1.2.0
-	github.com/robinlg/iamapi v0.0.0-20260323011606-de7292248302
+	github.com/robinlg/iamapi v0.0.0-20260324103442-d0b4db0739ed
 	github.com/robinlg/iamerrors v0.0.0-20260323010820-9df34eac87b0
 	github.com/robinlg/iamlib v0.0.0-20260323011431-99c9e08d2a03
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
@@ -22,6 +25,7 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.11.1
 	github.com/tpkeeper/gin-dump v1.0.1
+	github.com/vmihailenco/msgpack/v5 v5.3.4
 	github.com/zsais/go-gin-prometheus v0.1.0
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/mock v0.6.0

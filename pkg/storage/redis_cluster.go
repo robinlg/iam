@@ -1,16 +1,29 @@
+// Copyright 2025 Robin Liu <robinliu27@163.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package storage
 
 import (
 	"context"
+	"crypto/sha256"
 	"crypto/tls"
+	"encoding/base64"
+	"encoding/hex"
+	"fmt"
+	"hash"
 	"strconv"
+	"strings"
 	"sync/atomic"
 	"time"
 
+	"github.com/buger/jsonparser"
 	"github.com/go-redis/redis/v7"
 	"github.com/robinlg/iam/pkg/log"
 	errors "github.com/robinlg/iamerrors"
 	uuid "github.com/satori/go.uuid"
+	"github.com/spaolacci/murmur3"
+	"github.com/spf13/viper"
 )
 
 // Config defines options for redis cluster.
@@ -281,8 +294,64 @@ func (o *RedisOpts) failover() *redis.FailoverOptions {
 	}
 }
 
+// Connect will establish a connection this is always true because we are dynamically using redis.
+func (r *RedisCluster) Connect() bool {
+	return true
+}
+
 func (r *RedisCluster) singleton() redis.UniversalClient {
 	return singleton(r.IsCache)
+}
+
+func (r *RedisCluster) hashKey(in string) string {
+	if !r.HashKeys {
+		// Not hashing? Return the raw key
+		return in
+	}
+
+	return HashStr(in)
+}
+
+func (r *RedisCluster) fixKey(keyName string) string {
+	return r.KeyPrefix + r.hashKey(keyName)
+}
+
+func (r *RedisCluster) up() error {
+	if !Connected() {
+		return ErrRedisIsDown
+	}
+
+	return nil
+}
+
+// GetExp return the expiry of the given key.
+func (r *RedisCluster) GetExp(keyName string) (int64, error) {
+	log.Debugf("Getting exp for key: %s", r.fixKey(keyName))
+	if err := r.up(); err != nil {
+		return 0, err
+	}
+
+	value, err := r.singleton().TTL(r.fixKey(keyName)).Result()
+	if err != nil {
+		log.Errorf("Error trying to get TTL: ", err.Error())
+
+		return 0, ErrKeyNotFound
+	}
+
+	return int64(value.Seconds()), nil
+}
+
+// SetExp set expiry of the given key.
+func (r *RedisCluster) SetExp(keyName string, timeout time.Duration) error {
+	if err := r.up(); err != nil {
+		return err
+	}
+	err := r.singleton().Expire(r.fixKey(keyName), timeout).Err()
+	if err != nil {
+		log.Errorf("Could not EXPIRE key: %s", err.Error())
+	}
+
+	return err
 }
 
 // nolint: unparam
@@ -302,9 +371,28 @@ func connectSingleton(cache bool, config *Config) bool {
 	return true
 }
 
-func (r *RedisCluster) up() error {
-	if !Connected() {
-		return ErrRedisIsDown
+// StartPubSubHandler will listen for a signal and run the callback for
+// every subscription and message event.
+func (r *RedisCluster) StartPubSubHandler(channel string, callback func(interface{})) error {
+	if err := r.up(); err != nil {
+		return err
+	}
+	client := r.singleton()
+	if client == nil {
+		return errors.New("redis connection failed")
+	}
+
+	pubsub := client.Subscribe(channel)
+	defer pubsub.Close()
+
+	if _, err := pubsub.Receive(); err != nil {
+		log.Errorf("Error while receiving pubsub message: %s", err.Error())
+
+		return err
+	}
+
+	for msg := range pubsub.Channel() {
+		callback(msg)
 	}
 
 	return nil
@@ -324,4 +412,125 @@ func (r *RedisCluster) Publish(channel, message string) error {
 	}
 
 	return nil
+}
+
+// GetAndDeleteSet get and delete a key.
+func (r *RedisCluster) GetAndDeleteSet(keyName string) []interface{} {
+	log.Debugf("Getting raw key set: %s", keyName)
+	if err := r.up(); err != nil {
+		return nil
+	}
+	log.Debugf("keyName is: %s", keyName)
+	fixedKey := r.fixKey(keyName)
+	log.Debugf("Fixed keyname is: %s", fixedKey)
+
+	client := r.singleton()
+
+	var lrange *redis.StringSliceCmd
+	_, err := client.TxPipelined(func(pipe redis.Pipeliner) error {
+		lrange = pipe.LRange(fixedKey, 0, -1)
+		pipe.Del(fixedKey)
+
+		return nil
+	})
+	if err != nil {
+		log.Errorf("Multi command failed: %s", err.Error())
+
+		return nil
+	}
+
+	vals := lrange.Val()
+	log.Debugf("Analytics returned: %d", len(vals))
+	if len(vals) == 0 {
+		return nil
+	}
+
+	log.Debugf("Unpacked vals: %d", len(vals))
+	result := make([]interface{}, len(vals))
+	for i, v := range vals {
+		result[i] = v
+	}
+
+	return result
+}
+
+// AppendToSetPipelined append values to redis pipeline.
+func (r *RedisCluster) AppendToSetPipelined(key string, values [][]byte) {
+	if len(values) == 0 {
+		return
+	}
+
+	fixedKey := r.fixKey(key)
+	if err := r.up(); err != nil {
+		log.Debug(err.Error())
+
+		return
+	}
+	client := r.singleton()
+
+	pipe := client.Pipeline()
+	for _, val := range values {
+		pipe.RPush(fixedKey, val)
+	}
+
+	if _, err := pipe.Exec(); err != nil {
+		log.Errorf("Error trying to append to set keys: %s", err.Error())
+	}
+
+	// if we need to set an expiration time
+	if storageExpTime := int64(viper.GetDuration("analytics.storage-expiration-time")); storageExpTime != int64(-1) {
+		// If there is no expiry on the analytics set, we should set it.
+		exp, _ := r.GetExp(key)
+		if exp == -1 {
+			_ = r.SetExp(key, time.Duration(storageExpTime)*time.Second)
+		}
+	}
+}
+
+// B64JSONPrefix stand for `{"` in base64.
+const B64JSONPrefix = "ey"
+
+// TokenHashAlgo ...
+func TokenHashAlgo(token string) string {
+	// Legacy tokens not b64 and not JSON records
+	if strings.HasPrefix(token, B64JSONPrefix) {
+		if jsonToken, err := base64.StdEncoding.DecodeString(token); err == nil {
+			hashAlgo, _ := jsonparser.GetString(jsonToken, "h")
+
+			return hashAlgo
+		}
+	}
+
+	return ""
+}
+
+// Defines algorithm constant.
+var (
+	HashSha256    = "sha256"
+	HashMurmur32  = "murmur32"
+	HashMurmur64  = "murmur64"
+	HashMurmur128 = "murmur128"
+)
+
+func hashFunction(algorithm string) (hash.Hash, error) {
+	switch algorithm {
+	case HashSha256:
+		return sha256.New(), nil
+	case HashMurmur64:
+		return murmur3.New64(), nil
+	case HashMurmur128:
+		return murmur3.New128(), nil
+	case "", HashMurmur32:
+		return murmur3.New32(), nil
+	default:
+		return murmur3.New32(), fmt.Errorf("unknown key hash function: %s. Falling back to murmur32", algorithm)
+	}
+}
+
+// HashStr return hash the give string and return.
+func HashStr(in string) string {
+	h, _ := hashFunction(TokenHashAlgo(in))
+	_, _ = h.Write([]byte(in))
+
+	return hex.EncodeToString(h.Sum(nil))
 }

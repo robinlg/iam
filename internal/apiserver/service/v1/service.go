@@ -1,3 +1,7 @@
+// Copyright 2025 Robin Liu <robinliu27@163.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package v1
 
 //go:generate mockgen -self_package=github.com/robinlg/iam/internal/apiserver/service/v1 -destination mock_service.go -package v1 github.com/robinlg/iam/internal/apiserver/service/v1 Service,UserSrv,SecretSrv,PolicySrv
