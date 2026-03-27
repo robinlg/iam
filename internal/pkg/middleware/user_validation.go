@@ -45,7 +45,7 @@ func Validation() gin.HandlerFunc {
 }
 
 // isAdmin make sure the user is administrator.
-// It returns a `github.com/marmotedu/errors.withCode` error.
+// It returns a `github.com/robinlg/errors.withCode` error.
 func isAdmin(c *gin.Context) error {
 	username := c.GetString(UsernameKey)
 	user, err := store.Client().Users().Get(c, username, metav1.GetOptions{})

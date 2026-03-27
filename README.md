@@ -18,4 +18,4 @@ IAM 是一个基于 Go 语言开发的身份识别与访问管理系统，用于
 
 ## 参考
 
-[marmotedu-iam](https://github.com/marmotedu/iam)
+[robinlg-iam](https://github.com/robinlg/iam)

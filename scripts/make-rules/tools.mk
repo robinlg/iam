@@ -19,7 +19,7 @@ tools.verify.%:
 
 .PHONY: install.addlicense
 install.addlicense:
-	@$(GO) install github.com/marmotedu/addlicense@latest
+	@$(GO) install github.com/robinlg/addlicense@latest
 
 .PHONY: install.golines
 install.golines:

@@ -27,6 +27,7 @@ require (
 	github.com/robinlg/iamapi v0.0.0-20260324103442-d0b4db0739ed
 	github.com/robinlg/iamerrors v0.0.0-20260323010820-9df34eac87b0
 	github.com/robinlg/iamlib v0.0.0-20260323011431-99c9e08d2a03
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
 	github.com/segmentio/kafka-go v0.4.20
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72

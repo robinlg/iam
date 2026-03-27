@@ -15,7 +15,7 @@ const commandDesc = `Authorization server to run ladon policies which can protec
 It is written inspired by AWS IAM policiis.
 
 Find more iam-authz-server information at:
-    https://github.com/marmotedu/iam/blob/master/docs/guide/en-US/cmd/iam-authz-server.md,
+    https://github.com/robinlg/iam/blob/master/docs/guide/en-US/cmd/iam-authz-server.md,
 
 Find more ladon information at:
     https://github.com/ory/ladon`
