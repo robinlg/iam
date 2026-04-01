@@ -4,6 +4,7 @@ go 1.25
 
 require (
 	github.com/AlekSi/pointer v1.1.0
+	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/avast/retry-go v3.0.0+incompatible
@@ -17,17 +18,22 @@ require (
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-redsync/redsync/v4 v4.4.2
+	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/influxdata/influxdb v1.9.4
+	github.com/jinzhu/gorm v1.9.16
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/likexian/host-stat-go v0.0.0-20190516151207-c9cf36dd6ce9
 	github.com/mattn/go-isatty v0.0.20
 	github.com/mitchellh/mapstructure v1.4.2
+	github.com/olekukonko/tablewriter v0.0.5
 	github.com/olivere/elastic/v7 v7.0.29
 	github.com/ory/ladon v1.2.0
 	github.com/prometheus/client_golang v1.23.2
-	github.com/robinlg/iamapi v0.0.0-20260324103442-d0b4db0739ed
-	github.com/robinlg/iamerrors v0.0.0-20260323010820-9df34eac87b0
-	github.com/robinlg/iamlib v0.0.0-20260323011431-99c9e08d2a03
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/robinlg/iamapi v0.0.0-20260401071658-94f62d216e58
+	github.com/robinlg/iamerrors v0.0.0-20260327071612-31ded963321e
+	github.com/robinlg/iamlib v0.0.0-20260401021528-ef10f148ff77
+	github.com/russross/blackfriday v1.6.0
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
 	github.com/segmentio/kafka-go v0.4.20
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72
@@ -44,7 +50,7 @@ require (
 	go.uber.org/zap v1.17.0
 	golang.org/x/tools v0.41.0
 	google.golang.org/grpc v1.40.0
-	gorm.io/driver/mysql v1.6.0
+	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.31.1
 	k8s.io/klog v1.0.0
 )
