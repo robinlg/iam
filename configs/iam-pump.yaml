@@ -1,3 +1,7 @@
+# Copyright 2025 Robin Liu <robinliu27@163.com>. All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file.
+
 
 purge-delay: 10 # 审计日志清理时间间隔，默认 10s
 health-check-path: healthz # 健康检查路由，默认为 /healthz

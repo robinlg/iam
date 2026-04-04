@@ -1,3 +1,7 @@
+# Copyright 2025 Robin Liu <robinliu27@163.com>. All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file.
+
 
 health-check-path: healthz # 健康检查路由，默认为 /healthz
 health-check-address: 0.0.0.0:5050 # 健康检查绑定地址，默认为 0.0.0.0:5050

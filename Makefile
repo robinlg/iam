@@ -2,7 +2,7 @@
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: gen add-copyright
+all: gen add-copyright format lint
 
 # ==============================================================================
 # Build options
@@ -25,12 +25,50 @@ include scripts/make-rules/tools.mk
 define USAGE_OPTIONS
 
 Options:
+  BINS             The binaries to build. Default is all of cmd.
+                     This option is available when using: make build/build.multiarch
+                     Example: make build BINS="iam-apiserver iam-authz-server"
   V                Set to 1 enable verbose build. Default is 0.
 endef
 export USAGE_OPTIONS
 
 # ==============================================================================
 # Targets
+
+## build: Build source code for host platform.
+.PHONY: build
+build:
+	@$(MAKE) go.build
+
+## clean: Remove all files that are created by building.
+.PHONY: clean
+clean:
+	@echo "===========> Cleaning all build output"
+	@-rm -vrf $(OUTPUT_DIR)
+
+## lint: Check syntax and styling of go sources.
+.PHONY: lint
+lint:
+	@$(MAKE) go.lint
+
+## test: Run unit test.
+.PHONY: test
+test:
+	@$(MAKE) go.test
+
+## cover: Run unit test and get test coverage.
+.PHONY: cover
+cover:
+	@$(MAKE) go.test.cover
+
+## format: Gofmt (reformat) package sources (exclude vendor dir if existed).
+.PHONY: format
+format: tools.verify.golines tools.verify.goimports
+	@echo "===========> Formating codes"
+	@$(FIND) -type f -name '*.go' | $(XARGS) gofmt -s -w
+	@$(FIND) -type f -name '*.go' | $(XARGS) goimports -w -local $(ROOT_PACKAGE)
+	@$(FIND) -type f -name '*.go' | $(XARGS) golines -w --max-len=120 --reformat-tags --shorten-comments --ignore-generated .
+	@$(GO) mod edit -fmt
 
 ## verify-copyright: Verify the boilerplate headers for all files.
 .PHONY: verify-copyright
@@ -46,6 +84,20 @@ add-copyright:
 .PHONY: gen
 gen:
 	@$(MAKE) gen.run
+
+## tools: install dependent tools.
+.PHONY: tools
+tools:
+	@$(MAKE) tools.install
+
+## check-updates: Check outdated dependencies of the go projects.
+.PHONY: check-updates
+check-updates:
+	@$(MAKE) go.updates
+
+.PHONY: tidy
+tidy:
+	@$(GO) mod tidy
 
 ## help: Show this help info.
 .PHONY: help

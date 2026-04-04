@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Copyright 2025 Robin Liu <robinliu27@163.com>. All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file.
+
+
 # Controls verbosity of the script output and logging.
 IAM_VERBOSE="${IAM_VERBOSE:-5}"
 

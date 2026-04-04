@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Copyright 2025 Robin Liu <robinliu27@163.com>. All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file.
+
+
 #Define color variables
 #Feature
 COLOR_NORMAL='\033[0m';COLOR_BOLD='\033[1m';COLOR_DIM='\033[2m';COLOR_UNDER='\033[4m';
