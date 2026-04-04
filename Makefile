@@ -17,6 +17,7 @@ include scripts/make-rules/common.mk # make sure include common.mk at the first 
 include scripts/make-rules/golang.mk
 include scripts/make-rules/copyright.mk
 include scripts/make-rules/gen.mk
+include scripts/make-rules/swagger.mk
 include scripts/make-rules/tools.mk
 
 # ==============================================================================
@@ -84,6 +85,16 @@ add-copyright:
 .PHONY: gen
 gen:
 	@$(MAKE) gen.run
+
+## swagger: Generate swagger document.
+.PHONY: swagger
+swagger:
+	@$(MAKE) swagger.run
+
+## serve-swagger: Serve swagger spec and docs.
+.PHONY: swagger.serve
+serve-swagger:
+	@$(MAKE) swagger.serve
 
 ## tools: install dependent tools.
 .PHONY: tools
