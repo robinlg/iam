@@ -109,7 +109,7 @@ func main() {
 
 	if !*doc {
 		// Print the header and package clause.
-		g.Printf("// Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.\n")
+		g.Printf("// Copyright 2025 Robin Liu <robinliu27@163.com>. All rights reserved.\n")
 		g.Printf("// Use of this source code is governed by a MIT style\n")
 		g.Printf("// license that can be found in the LICENSE file.\n")
 		g.Printf("\n")

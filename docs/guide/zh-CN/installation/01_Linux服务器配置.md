@@ -153,8 +153,8 @@ EOF
 你可以直接执行以下命令来配置 Git：
 
 ```bash
-$ git config --global user.name "Lingfei Kong"    # 用户名改成自己的
-$ git config --global user.email "colin404@foxmail.com"    # 邮箱改成自己的
+$ git config --global user.name "Robin Liu"    # 用户名改成自己的
+$ git config --global user.email "robinliu27@163.com"    # 邮箱改成自己的
 $ git config --global credential.helper store    # 设置 git，保存用户名和密码
 $ git config --global core.longpaths true # 解决 Git 中 'Filename too long' 的错误
 ```

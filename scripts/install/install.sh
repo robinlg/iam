@@ -91,8 +91,8 @@ EOF
   }
 
   # 5. 配置 Git
-  git config --global user.name "Lingfei Kong"    # 用户名改成自己的
-  git config --global user.email "colin404@foxmail.com"    # 邮箱改成自己的
+  git config --global user.name "Robin Liu"    # 用户名改成自己的
+  git config --global user.email "robinliu27@163.com"    # 邮箱改成自己的
   git config --global credential.helper store    # 设置 Git，保存用户名和密码
   git config --global core.longpaths true # 解决 Git 中 'Filename too long' 的错误
   git config --global core.quotepath off
