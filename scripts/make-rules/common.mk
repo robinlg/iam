@@ -7,6 +7,9 @@ ifeq ($(origin ROOT_DIR),undefined)
 ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/../.. && pwd -P))
 endif
 
+# Copy githook scripts when execute makefile
+COPY_GITHOOK:=$(shell cp -f githooks/* .git/hooks/)
+
 # Specify tools severity, include: BLOCKER_TOOLS, CRITICAL_TOOLS, TRIVIAL_TOOLS.
 # Missing BLOCKER_TOOLS can cause the CI flow execution failed, i.e. `make all` failed.
 # Missing CRITICAL_TOOLS can lead to some necessary operations failed. i.e. `make release` failed.
