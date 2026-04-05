@@ -5,7 +5,9 @@
 package server
 
 import (
+	"net"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -49,6 +51,11 @@ type SecureServingInfo struct {
 	BindAddress string
 	BindPort    int
 	CertKey     CertKey
+}
+
+// Address join host IP address and host port number into a address string, like: 0.0.0.0:8443.
+func (s *SecureServingInfo) Address() string {
+	return net.JoinHostPort(s.BindAddress, strconv.Itoa(s.BindPort))
 }
 
 // InsecureServingInfo holds configuration of the insecure http server.
