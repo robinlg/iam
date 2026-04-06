@@ -33,7 +33,7 @@ require (
 	github.com/ory/ladon v1.3.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/robinlg/iam-sdk-go v0.0.0-20260404044750-edbe08d0454c
+	github.com/robinlg/iam-sdk-go v0.0.0-20260406030947-c0df093b0304
 	github.com/robinlg/iamapi v0.0.0-20260404041020-e7ac17495c42
 	github.com/robinlg/iamerrors v0.0.0-20260327071612-31ded963321e
 	github.com/robinlg/iamlib v0.0.0-20260404040643-b74e62ed0bf8
