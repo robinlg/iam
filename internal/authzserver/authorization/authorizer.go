@@ -5,6 +5,8 @@
 package authorization
 
 import (
+	"context"
+
 	"github.com/ory/ladon"
 	"github.com/robinlg/iam/pkg/log"
 	authzv1 "github.com/robinlg/iamapi/authz/v1"
@@ -30,7 +32,7 @@ func NewAuthorizer(authorizationClient AuthorizationInterface) *Authorizer {
 func (a *Authorizer) Authorize(request *ladon.Request) *authzv1.Response {
 	log.Debug("authorize request", log.Any("request", request))
 
-	if err := a.warden.IsAllowed(request); err != nil {
+	if err := a.warden.IsAllowed(context.TODO(), request); err != nil {
 		return &authzv1.Response{
 			Denied: true,
 			Reason: err.Error(),

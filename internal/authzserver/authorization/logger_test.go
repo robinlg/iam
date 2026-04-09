@@ -5,6 +5,7 @@
 package authorization
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
@@ -71,7 +72,7 @@ func TestAuditLogger_LogRejectedAccessRequest(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := NewAuditLogger(mockAuthz)
-			a.LogRejectedAccessRequest(tt.args.r, tt.args.p, tt.args.d)
+			a.LogRejectedAccessRequest(context.TODO(), tt.args.r, tt.args.p, tt.args.d)
 		})
 	}
 }
@@ -104,7 +105,7 @@ func TestAuditLogger_LogGrantedAccessRequest(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := NewAuditLogger(mockAuthz)
-			a.LogGrantedAccessRequest(tt.args.r, tt.args.p, tt.args.d)
+			a.LogGrantedAccessRequest(context.TODO(), tt.args.r, tt.args.p, tt.args.d)
 		})
 	}
 }

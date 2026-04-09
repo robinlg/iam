@@ -15,6 +15,7 @@ VERSION_PACKAGE=github.com/robinlg/iamlib/pkg/version
 
 include scripts/make-rules/common.mk # make sure include common.mk at the first include line
 include scripts/make-rules/golang.mk
+include scripts/make-rules/image.mk
 include scripts/make-rules/copyright.mk
 include scripts/make-rules/gen.mk
 include scripts/make-rules/swagger.mk
@@ -29,6 +30,9 @@ Options:
   BINS             The binaries to build. Default is all of cmd.
                      This option is available when using: make build/build.multiarch
                      Example: make build BINS="iam-apiserver iam-authz-server"
+  IMAGES           Backend images to make. Default is all of cmd starting with iam-.
+                     This option is available when using: make image/image.multiarch/push/push.multiarch
+                     Example: make image.multiarch IMAGES="iam-apiserver iam-authz-server"
   V                Set to 1 enable verbose build. Default is 0.
 endef
 export USAGE_OPTIONS
@@ -40,6 +44,31 @@ export USAGE_OPTIONS
 .PHONY: build
 build:
 	@$(MAKE) go.build
+
+## build.multiarch: Build source code for multiple platforms. See option PLATFORMS.
+.PHONY: build.multiarch
+build.multiarch:
+	@$(MAKE) go.build.multiarch
+
+## image: Build docker images for host arch.
+.PHONY: image
+image:
+	@$(MAKE) image.build
+
+## image.multiarch: Build docker images for multiple platforms. See option PLATFORMS.
+.PHONY: image.multiarch
+image.multiarch:
+	@$(MAKE) image.build.multiarch
+
+## push: Build docker images for host arch and push images to registry.
+.PHONY: push
+push:
+	@$(MAKE) image.push
+
+## push.multiarch: Build docker images for multiple platforms and push images to registry.
+.PHONY: push.multiarch
+push.multiarch:
+	@$(MAKE) image.push.multiarch
 
 ## clean: Remove all files that are created by building.
 .PHONY: clean
