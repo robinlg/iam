@@ -115,6 +115,11 @@ add-copyright:
 gen:
 	@$(MAKE) gen.run
 
+## ca: Generate CA files for all iam components.
+.PHONY: ca
+ca:
+	@$(MAKE) gen.ca
+
 ## swagger: Generate swagger document.
 .PHONY: swagger
 swagger:
